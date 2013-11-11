@@ -1,0 +1,18 @@
+var jt = require('jt'),
+    app = require('express')(),
+    templates = {},
+    fs = require('fs');
+
+module.exports = function (path, params, done) {
+    try {
+        if ('development' === app.get('env')) {
+            delete require.cache[path];
+            done(null, jt(require(path))(params));
+        } else {
+            templates[path] = templates[path] || jt(require(path));
+            done(null, templates[path](params));
+        }
+    } catch (e) {
+        done(e);
+    }     
+}
