@@ -36,13 +36,12 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/room/:id', routes.index);
+app.get('/room/:id', routes.room);
 app.get('/video', routes.video);
-/*app.get('/room', routes.room);*/
 
 server
     .listen(3000, function(){
-      console.log('Express server listening on port 3000');
+        console.log('Express server listening on port 3000');
     })
     .on('error', function () {
         console.error('\n    Port in use\n    Run "killall -9 node" to kill another node app');

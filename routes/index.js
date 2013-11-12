@@ -4,8 +4,13 @@ var stotage = require('../lib/stotage');
  * GET home page.
  */
 exports.index = function (req, res) {
-	res.render('index', { title: 'Express' });
+	res.render('index');
 };
+
+exports.room = function (req, res) {
+    
+	res.render('room', {roomId: 125});
+}
 
 /**
  * Ajax. Create new room be video url
@@ -17,6 +22,3 @@ exports.video = function (req, res) {
     });
 };
 
-exports.room = function () {
-	res.render('index', { title: 'Express' });
-}

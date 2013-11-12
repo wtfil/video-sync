@@ -1,15 +1,6 @@
 var Exoskeleton = require('exoskeleton'),
     router = require('./express-router');
 
-router = router.start(Exoskeleton, {
-    '': function () {
-        console.log(arguments);
-    },
-    'room/:id': function () {
-        console.log(arguments);
-    }
-})
-
 var FormView = Exoskeleton.View.extend({
 
     events: {
@@ -22,7 +13,8 @@ var FormView = Exoskeleton.View.extend({
         Exoskeleton.utils.ajax({
             url: '/video?url=' +  encodeURIComponent(val),
             success: function (data) {
-                Exoskeleton.history.navigate('room/' + data.roomId, {trigger: true});
+                window.location.href = '/room/' + data.roomId;
+                /*Exoskeleton.history.navigate('room/' + data.roomId, {trigger: true});*/
             }
         });
     }
