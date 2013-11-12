@@ -11,6 +11,8 @@
     "socket.io": "0.9.16",
     "socket.io-client": "0.9.16",
     "browserify": "2.35.1",
+    "exoskeleton": "0.5.1",
+    "jt": "*",
     "mongoose": "3.8.0"
   }
 }

@@ -32,11 +32,13 @@ app.use(express.static(static));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
-app.get('/video', routes.getVideo);
+app.get('/room/:id', routes.index);
+app.get('/video', routes.video);
+/*app.get('/room', routes.room);*/
 
 server
     .listen(3000, function(){

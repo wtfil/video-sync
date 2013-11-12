@@ -7,8 +7,16 @@ exports.index = function (req, res) {
 	res.render('index', { title: 'Express' });
 };
 
-exports.getVideo = function (req, res) {
-	var url = req.query.url,
-		roomId = stotage.set(url);
-	res.json({roomId: roomId});
+/**
+ * Ajax. Create new room be video url
+ */
+exports.video = function (req, res) {
+	var url = req.query.url;
+    stotage.set(url, function (err, roomId) {
+        res.json({roomId: roomId});
+    });
 };
+
+exports.room = function () {
+	res.render('index', { title: 'Express' });
+}
