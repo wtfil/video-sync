@@ -7,11 +7,6 @@ exports.index = function (req, res) {
 	res.render('index');
 };
 
-exports.room = function (req, res) {
-    
-	res.render('room', {roomId: 125});
-}
-
 /**
  * Ajax. Create new room be video url
  */
@@ -27,11 +22,19 @@ exports.setVideo = function (req, res) {
 
 exports.getVideo = function (req, res) {
     var roomId = req.query.roomId;
-    stotage.get(roomId, function (err, videoId) {
+    stotage.get(roomId, function (err, result) {
         if (err) {
             res.send(err.message, 500);
         }
-        res.json({videoId: videoId});
+        res.json(result);
     })
 }
 
+exports.setCandidate = function (req, res) {
+    var candidate = req.query.candidate,
+        roomId = req.query.roomId;
+
+    stotage.setCandidate(roomId, candidate, function () {
+        res.end();
+    });
+}

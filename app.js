@@ -9,19 +9,13 @@ var express = require('express'),
     path = require('path'),
     static = path.join(__dirname, 'public'),
     jsBuilder = require('./lib/builder'),
-    templateBuilder = require('./lib/jt')
-    jt = require('jt'),
 
     app = express(),
     server = http.createServer(app);
 
-require('./lib/socket')(server);
-
 // all environments
 app.set('views', __dirname + '/views');
-app.set('view engine', 'js');
 app.set('view engine', 'jade');
-app.engine('js', templateBuilder);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -39,6 +33,7 @@ app.get('/', routes.index);
 app.get('/room/:id', routes.index);
 app.get('/video', routes.getVideo);
 app.post('/video', routes.setVideo);
+app.post('/candidate', routes.setCandidate);
 
 server
     .listen(3000, function(){
