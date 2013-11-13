@@ -31,16 +31,5 @@
     module.exports = {
         start: start
     };
-    /*
-    router = router.start(Exoskeleton, {
-        '': function () {
-            console.log(arguments);
-        },
-        'room/:id': function () {
-            console.log(arguments);
-        }
-    })
-    */
 
 }());
-

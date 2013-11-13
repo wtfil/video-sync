@@ -36,8 +36,9 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/room/:id', routes.room);
-app.get('/video', routes.video);
+app.get('/room/:id', routes.index);
+app.get('/video', routes.getVideo);
+app.post('/video', routes.setVideo);
 
 server
     .listen(3000, function(){

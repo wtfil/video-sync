@@ -15,10 +15,23 @@ exports.room = function (req, res) {
 /**
  * Ajax. Create new room be video url
  */
-exports.video = function (req, res) {
-	var url = req.query.url;
-    stotage.set(url, function (err, roomId) {
+exports.setVideo = function (req, res) {
+
+    stotage.set(req.query.url, function (err, roomId) {
+        if (err) {
+            return res.send(err.message, 500);
+        }
         res.json({roomId: roomId});
     });
 };
+
+exports.getVideo = function (req, res) {
+    var roomId = req.query.roomId;
+    stotage.get(roomId, function (err, videoId) {
+        if (err) {
+            res.send(err.message, 500);
+        }
+        res.json({videoId: videoId});
+    })
+}
 

@@ -1,7 +1,12 @@
 var Exoskeleton = require('exoskeleton'),
-    router = require('./express-router');
+    Player = require('./player'),
+    router,
+    FormView,
+    App, app;
 
-var FormView = Exoskeleton.View.extend({
+
+
+FormView = Exoskeleton.View.extend({
 
     events: {
         'submit': 'onSubmit'
@@ -11,55 +16,54 @@ var FormView = Exoskeleton.View.extend({
         var val = this.el.querySelector('input').value;
         e.preventDefault();
         Exoskeleton.utils.ajax({
+            type: 'POST',
             url: '/video?url=' +  encodeURIComponent(val),
             success: function (data) {
-                window.location.href = '/room/' + data.roomId;
-                /*Exoskeleton.history.navigate('room/' + data.roomId, {trigger: true});*/
+                router.navigate('room/' + data.roomId, {trigger: true});
+            },
+            error: function (data) {
+                console.error(data.response);
             }
         });
     }
 });
 
+App = Exoskeleton.View.extend({
+    initialize: function () {
+        this._content = this.el.querySelector('.app__content');
+    },
+
+    update: function (view) {
+        var child = this._content.childNodes[0];
+        if (child) {
+            this._content.replaceChild(view.el, this._content.childNodes[0]);
+        } else {
+            this._content.appendChild(view.el);
+        }
+    },
+
+    showRoom: function (id) {
+        var player = new Player({id: id});
+        this.update(player);
+        player.start();
+    }
+    
+});
+
+
+router = new (Exoskeleton.Router.extend({
+    routes: {
+        '': function () {
+            console.log(arguments);
+        },
+        'room/:id': function (id) {
+            app.showRoom(id);
+        }
+    }
+}))();
+
 window.addEventListener('load', function () {
     new FormView({el: document.querySelector('.search')});    
-})
-
-/*c
-var Youtube = require('./youtube'),
-    io = require('socket.io-client'),
-    socket = io.connect('http://localhost'),
-    jt = require('jt'),
-    master = false;
-
-window.addEventListener('load', function () {
-    document.querySelector('.search')
-        .addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log()
-    });    
-}, false);
-
-socket.emit('register', {pageId: 1});
-socket.on('register', function (data) {
-    master = data.master;
+    app = new App({el: document.querySelector('.app')});
+    Exoskeleton.history.start({pushState: true, root: '/'});
 });
-socket.on('video', function (data) {
-    var time = data.time + (Date.now() - data.timestamp) / 1000 + 0.4;
-    console.log('video change');
-    console.log(data.time, time);
-    p.seek(time);
-});
-var p = new Youtube('UwXSHnb7XnA')
-p.ready(function () {
-    p.play();
-    p.change(function (data) {
-        if (master) {
-            console.log('change');
-            socket.emit('video', {
-                time: data.time,
-                timestamp: Date.now()
-            })
-        }
-    })
-})
-*/

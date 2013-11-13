@@ -1,4 +1,4 @@
-var Youtube = (function (global, document, undefined) {
+(function (global, document, undefined) {
     var handlers = [],
         slice = handlers.slice,
         script = document.createElement('script'),
@@ -13,7 +13,7 @@ var Youtube = (function (global, document, undefined) {
         });
     }
     
-    function Youtube (id) {
+    function Youtube (domId, videoId) {
         var _this = this,
             args = arguments;
 
@@ -24,10 +24,10 @@ var Youtube = (function (global, document, undefined) {
             return;
         }
 
-        this._player = new YT.Player('player', {
+        this._player = new YT.Player(domId, {
             height: '390',
             width: '640',
-            videoId: id,
+            videoId: videoId,
             events: {
                 'onReady': this._onReady,
                 'onStateChange': this._onChange.bind(this)
