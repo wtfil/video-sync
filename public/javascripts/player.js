@@ -28,12 +28,36 @@ module.exports = Exoskeleton.View.extend({
                 var PeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
                 var SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.RTCSessionDescription;
 
-                var s = new PeerConnection({iceServers: [{ url: 'stun:localhost:3000' }]});
+                var DATA_CHANNEL_OPTIONS = {
+                    optional: [{
+                        RtpDataChannels: true
+                    }, {
+                        DtlsSrtpKeyAgreement: true
+                    }]
+                };
+                var SERVERS = {
+                    iceServers: [{ url: 'stun:stun.l.google.com:19302' }]
+                }
+                var s = new PeerConnection(SERVERS, DATA_CHANNEL_OPTIONS);
+                var c = s.createDataChannel('stream', {});
+
+                c.onopen = function () {
+                    console.log('data channel opened');
+                }
+                c.onclose = function () {
+                    console.log('data channel closed');
+                }
+                c.onmessage = function () {
+                    console.log('data channel message', arguments);
+                }
                 s.onicecandidate = function f(e) {
                     signal(_this._roomId, {candidate: e.candidate});
                 }
                 s.onaddstream = function () {
                     console.log('onaddstream', arguments);
+                }
+                s.ondatachannel = function () {
+                    console.log('RTC create channel');
                 }
 
                 console.log('CALLER', !response.signals.length);
