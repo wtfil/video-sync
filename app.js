@@ -33,7 +33,7 @@ app.get('/', routes.index);
 app.get('/room/:id', routes.index);
 app.get('/video', routes.getVideo);
 app.post('/video', routes.setVideo);
-app.post('/candidate', routes.setCandidate);
+app.post('/signal', routes.signal);
 
 server
     .listen(3000, function(){

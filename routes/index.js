@@ -30,11 +30,11 @@ exports.getVideo = function (req, res) {
     })
 }
 
-exports.setCandidate = function (req, res) {
-    var candidate = req.query.candidate,
+exports.signal = function (req, res) {
+    var data = req.query.data,
         roomId = req.query.roomId;
 
-    stotage.setCandidate(roomId, candidate, function () {
+    stotage.addSignal(roomId, data, function () {
         res.end();
     });
 }

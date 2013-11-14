@@ -4,33 +4,6 @@ var Exoskeleton = require('exoskeleton'),
     FormView,
     App, app;
 
-var PeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-var SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.RTCSessionDescription;
-
-var s = new PeerConnection({iceServers: [{ url: 'stun:localhost:3000' }]});
-s.onicecandidate = function f(e) {
-    if (f.callen) {
-        return;   
-    }
-    f.callen = true;
-    Exoskeleton.utils.ajax({
-        type: 'POST',
-        url: '/candidate?candidate=' + JSON.stringify(e.candidate)
-    });
-}
-s.onaddstream = function () {
-    console.log('onaddstream', arguments);
-}
-s.createOffer(function (desc) {
-    console.log('create offer', arguments);
-    s.setLocalDescription(desc);
-});
-/*s.createAnswer(s.remoteDescription,function () {*/
-/*console.log('create another', arguments);*/
-/*})*/
-s.onmessage = function () {
-    console.log('on massage', arguments);
-}
 
 FormView = Exoskeleton.View.extend({
 
