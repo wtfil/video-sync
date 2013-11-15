@@ -29,10 +29,15 @@
             width: '640',
             videoId: videoId,
             events: {
-                'onReady': this._onReady,
-                'onStateChange': this._onChange.bind(this)
+                'onReady': function () {
+                    _this._onReady();
+                },
+                'onStateChange': function (e) {
+                    _this._onChange(e);
+                }
             }
         });
+        console.log(this._player);
     }
 
     Youtube.prototype._method = function (method) {
@@ -46,9 +51,10 @@
     }
     Youtube.prototype._onReady = function () {};
     Youtube.prototype._onChangeHandler = function () {};
-    Youtube.prototype._onChange = function () {
+    Youtube.prototype._onChange = function (e) {
         this._onChangeHandler({
-            time: this._player.getCurrentTime()
+            time: this._player.getCurrentTime(),
+            state: e.data
         });
     }
     Youtube.prototype.change = function (fn) {

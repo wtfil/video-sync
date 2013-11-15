@@ -1,4 +1,4 @@
-var stotage = require('../lib/stotage');
+var storage = require('../lib/storage');
 
 /*
  * GET home page.
@@ -12,7 +12,7 @@ exports.index = function (req, res) {
  */
 exports.setVideo = function (req, res) {
 
-    stotage.set(req.query.url, function (err, roomId) {
+    storage.set(req.query.url, function (err, roomId) {
         if (err) {
             return res.send(err.message, 500);
         }
@@ -22,19 +22,10 @@ exports.setVideo = function (req, res) {
 
 exports.getVideo = function (req, res) {
     var roomId = req.query.roomId;
-    stotage.get(roomId, function (err, result) {
+    storage.get(roomId, function (err, result) {
         if (err) {
             res.send(err.message, 500);
         }
         res.json(result);
     })
-}
-
-exports.signal = function (req, res) {
-    var data = req.query.data,
-        roomId = req.query.roomId;
-
-    stotage.addSignal(roomId, data, function () {
-        res.end();
-    });
 }

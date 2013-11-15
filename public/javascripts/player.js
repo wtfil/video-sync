@@ -1,12 +1,8 @@
 var Exoskeleton = require('Exoskeleton'),
-    Youtube = require('./youtube');
+    Youtube = require('./youtube'),
+    io = require('socket.io-client'),
+    socket = io.connect('http://localhost');
 
-function signal(roomId, data) {
-    Exoskeleton.utils.ajax({
-        type: 'POST',
-        url: '/signal?data=' + JSON.stringify(data) + '&roomId=' + roomId
-    });
-}
 module.exports = Exoskeleton.View.extend({
     initialize: function (options) {
         this._roomId = options.id;
@@ -18,73 +14,36 @@ module.exports = Exoskeleton.View.extend({
             _this = this;
 
         this.el.id = id;
+        socket.emit('room.connect', {roomId: this._roomId});
 
         Exoskeleton.utils.ajax({
             url: '/video?roomId=' + this._roomId,
             success: function (response) {
 
-                var p = _this._player = new Youtube(id, response.videoId);
+                var p = new Youtube(id, response.videoId);
 
-                var PeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.RTCPeerConnection;
-                var SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.RTCSessionDescription;
+                p.ready(function () {
+                    /*p.play();*/
+                });
 
-                var DATA_CHANNEL_OPTIONS = {
-                    optional: [{
-                        RtpDataChannels: true
-                    }, {
-                        DtlsSrtpKeyAgreement: true
-                    }]
-                };
-                var SERVERS = {
-                    iceServers: [{ url: 'stun:stun.l.google.com:19302' }]
-                }
-                var s = new PeerConnection(SERVERS, DATA_CHANNEL_OPTIONS);
-                var c = s.createDataChannel('stream', {});
-
-                c.onopen = function () {
-                    console.log('data channel opened');
-                }
-                c.onclose = function () {
-                    console.log('data channel closed');
-                }
-                c.onmessage = function () {
-                    console.log('data channel message', arguments);
-                }
-                s.onicecandidate = function f(e) {
-                    signal(_this._roomId, {candidate: e.candidate});
-                }
-                s.onaddstream = function () {
-                    console.log('onaddstream', arguments);
-                }
-                s.ondatachannel = function () {
-                    console.log('RTC create channel');
-                }
-
-                console.log('CALLER', !response.signals.length);
-                // caller
-                if (!response.signals.length) {
-                    s.createOffer(function (desc) {
-                        console.log('create offer', arguments);
-                        s.setLocalDescription(desc);
-                        signal(_this._roomId, {sdp: desc});
-                    });
-                } else {
-
-                    /*
-                    s.createAnswer(s.remoteDescription,function () {
-                        console.log('create another', arguments);
-                    });
-                    */
-
-                    response.signals.forEach(function (signal) {
-                        var data = JSON.parse(signal);
-                        if (data.sdp) {
-                            s.setRemoteDescription(new SessionDescription(data.sdp));
-                        } else {
-                            s.addIceCandidate(new RTCIceCandidate(data.candidate));
+                /*
+                socket.on('sync', function (data) {
+                     
+                });
+                */
+                socket.on('change', function (data) {
+                    console.log('change', JSON.stringify(data), p._player.getPlayerState());
+                    if (data.state === 1) {
+                        console.log('1')
+                        if (p._player.getPlayerState() === -1) {
+                            console.log(2);
+                            p.play();
                         }
-                    });
-                } 
+                        p.seek(data.time);
+                    }
+                    /*p.seek(data.time);*/
+                });
+                p.change(socket.emit.bind(socket, 'change'));
             }
         });
 
