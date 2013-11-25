@@ -23,8 +23,7 @@ App = Exoskeleton.View.extend({
         var _this = this;
         this._content = this.el.querySelector('.app__content');
         this._form = new FormView({el: this.el.querySelector('.search')});
-        console.log(Exoskeleton.history.fragment)
-        this._roomId = null;
+        this.showMain();
         this._form.on('submit', function (data) {
             if (!_this._roomId) {
                 _this._newRoom(data.val);
@@ -77,6 +76,12 @@ App = Exoskeleton.View.extend({
         this.update(player);
         this.el.classList.add('room');
         player.start();
+    },
+
+    showMain: function () {
+        this.el.classList.remove('room');
+        this._content.innerHTML = '';
+        this._roomId = null;
     }
     
 });
@@ -85,7 +90,7 @@ App = Exoskeleton.View.extend({
 router = new (Exoskeleton.Router.extend({
     routes: {
         '': function () {
-            console.log(arguments);
+            app.showMain();
         },
         'room/:id': function (id) {
             app.showRoom(id);

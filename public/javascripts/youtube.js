@@ -80,7 +80,6 @@
     }
     Youtube.prototype.changeVideo = function (videoId) {
         this._method('loadVideoById', videoId);
-        /*this._method('pause');*/
     }
     Youtube.prototype.mute = function () {
         this._method('mute');

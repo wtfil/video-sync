@@ -49,4 +49,3 @@ module.exports = Exoskeleton.View.extend({
     }
 
 });
-
