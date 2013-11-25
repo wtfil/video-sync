@@ -5,7 +5,8 @@ html(lang="en")
         script(type='text/javascript', src='/javascripts/index.js')
         link(rel='stylesheet', href='/stylesheets/index.css')
     body
-        form.search()
-            input
-            button(type submit) search
-        block content
+        div.app
+            form.search()
+                input(placeholder='Paste youtube url or videoId here')
+                button(type=submit) Start
+            div.app__content

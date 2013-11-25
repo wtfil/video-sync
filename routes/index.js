@@ -12,11 +12,11 @@ exports.index = function (req, res) {
  */
 exports.setVideo = function (req, res) {
 
-    storage.set(req.query.url, function (err, roomId) {
+    storage.set(req.query, function (err, result) {
         if (err) {
             return res.send(err.message, 500);
         }
-        res.json({roomId: roomId});
+        res.json(result);
     });
 };
 

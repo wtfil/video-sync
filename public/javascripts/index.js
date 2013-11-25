@@ -14,9 +14,30 @@ FormView = Exoskeleton.View.extend({
     onSubmit: function (e) {
         var val = this.el.querySelector('input').value;
         e.preventDefault();
+        this.trigger('submit', {val: val});
+    }
+});
+
+App = Exoskeleton.View.extend({
+    initialize: function () {
+        var _this = this;
+        this._content = this.el.querySelector('.app__content');
+        this._form = new FormView({el: this.el.querySelector('.search')});
+        console.log(Exoskeleton.history.fragment)
+        this._roomId = null;
+        this._form.on('submit', function (data) {
+            if (!_this._roomId) {
+                _this._newRoom(data.val);
+            } else {
+                _this._changeVideo(data.val);
+            }
+        })
+    },
+
+    _newRoom: function (videoUrl) {
         Exoskeleton.utils.ajax({
             type: 'POST',
-            url: '/video?url=' +  encodeURIComponent(val),
+            url: '/video?videoUrl=' +  encodeURIComponent(videoUrl),
             success: function (data) {
                 router.navigate('room/' + data.roomId, {trigger: true});
             },
@@ -24,12 +45,20 @@ FormView = Exoskeleton.View.extend({
                 console.error(data.response);
             }
         });
-    }
-});
+    },
 
-App = Exoskeleton.View.extend({
-    initialize: function () {
-        this._content = this.el.querySelector('.app__content');
+    _changeVideo: function (videoUrl) {
+        var _this = this;
+        Exoskeleton.utils.ajax({
+            type: 'POST',
+            url: '/video?roomId=' + this._roomId + '&videoUrl=' +  encodeURIComponent(videoUrl),
+            success: function (data) {
+                _this._player.changeVideo(data.videoId);
+            },
+            error: function (data) {
+                console.error(data.response);
+            }
+        });
     },
 
     update: function (view) {
@@ -43,7 +72,10 @@ App = Exoskeleton.View.extend({
 
     showRoom: function (id) {
         var player = new Player({id: id});
+        this._roomId = id;
+        this._player = player;
         this.update(player);
+        this.el.classList.add('room');
         player.start();
     }
     
@@ -62,7 +94,7 @@ router = new (Exoskeleton.Router.extend({
 }))();
 
 window.addEventListener('load', function () {
-    new FormView({el: document.querySelector('.search')});    
+    /*new FormView({el: document.querySelector('.search')});    */
     app = new App({el: document.querySelector('.app')});
     Exoskeleton.history.start({pushState: true, root: '/'});
 });

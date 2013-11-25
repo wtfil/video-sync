@@ -6,8 +6,6 @@ var Exoskeleton = require('Exoskeleton'),
 module.exports = Exoskeleton.View.extend({
     initialize: function (options) {
         this._roomId = options.id;
-
-
     },
     start: function () {
         var id = 'id' + Date.now(),
@@ -21,32 +19,34 @@ module.exports = Exoskeleton.View.extend({
             success: function (response) {
 
                 var p = new Youtube(id, response.videoId);
+                _this._youtube = p;
 
-                p.ready(function () {
-                    /*p.play();*/
+                socket.on('sync', function () {
+                    socket.emit('change', p.status());
                 });
 
-                /*
-                socket.on('sync', function (data) {
-                     
-                });
-                */
                 socket.on('change', function (data) {
-                    console.log('change', JSON.stringify(data), p._player.getPlayerState());
-                    if (data.state === 1) {
-                        console.log('1')
-                        if (p._player.getPlayerState() === -1) {
-                            console.log(2);
-                            p.play();
-                        }
-                        p.seek(data.time);
+                    console.log('change', data);
+                    if (data.videoId) {
+                        p.changeVideo(data.videoId);
+                        return;
                     }
-                    /*p.seek(data.time);*/
+                    if (data.state === 1) {
+                        p.seek(data.time);
+                        p.play();
+                    } else if (data.state === 2) {
+                        p.pause();
+                    }
                 });
+
                 p.change(socket.emit.bind(socket, 'change'));
             }
         });
-
+    },
+    changeVideo: function (videoId) {
+        socket.emit('change', {videoId: videoId});
+        this._youtube.changeVideo(videoId);
     }
+
 });
 

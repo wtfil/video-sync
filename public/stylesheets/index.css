@@ -1,18 +1,25 @@
 .search
 {
 	height: 30px;
+    width: 640px;
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
 }
 .search input
 {
-	height: 100%;
-	width: 50%;
-	max-width: 700px;
-	padding: 3px;
+    height: 100%;
 	box-sizing: border-box;
 	margin: 0;
+    left: 0;
+    right: 60px;
+    font-family: arial, sans-serif;
+    font-size: 16px;
+    position: absolute;
 	border: 1px solid #B3B3B3;
 	border-right: none;
 	outline: none;
+    padding: 0 10px;
 	color: #222;
 	font: 16px arial,sans-serif;
 }
@@ -21,9 +28,21 @@
 	width: 60px;
 	height: 100%;
 	color: white;
+    float: right;
 	background: -webkit-linear-gradient(top,#4387fd,#4683ea);
 	border: none;
 	border-radius: 2px;
 	border-bottom-left-radius: 0;
 	border-top-left-radius: 0;
+    outline: none;
+}
+.app__content
+{
+    margin-top: 7px;
+}
+
+.app.room .search
+{
+    position: relative;
+    margin: 0;
 }
