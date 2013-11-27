@@ -4,7 +4,6 @@
 
 var express = require('express'),
     routes = require('./routes'),
-    user = require('./routes/user'),
     http = require('http'),
     path = require('path'),
     static = path.join(__dirname, 'public'),
@@ -43,4 +42,4 @@ server
     })
     .on('error', function () {
         console.error('\n    Port in use\n    Run "killall -9 node" to kill another node app');
-    })
+    });

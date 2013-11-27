@@ -18,6 +18,13 @@ module.exports = Exoskeleton.View.extend({
             url: '/video?roomId=' + this._roomId,
             success: function (response) {
 
+                Exoskeleton.utils.ajax({
+                    url: 'http://gdata.youtube.com/feeds/api/videos/' + response.videoId,
+                    success: function (xml) {
+                        console.log(xml.match(/<title type='text'>(.*)<\/title>/)[1]);
+                    }
+                });
+
                 var p = new Youtube(id, response.videoId);
                 _this._youtube = p;
 

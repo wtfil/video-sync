@@ -35,6 +35,7 @@
                 onStateChange: this._onChange.bind(this)
             }
         });
+        console.log(this._player)
     }
 
     Youtube.prototype._method = function (method) {
