@@ -1,5 +1,7 @@
+/** @jsx React.DOM */
 var Exoskeleton = require('exoskeleton'),
     Player = require('./player'),
+    React = require('react-tools').React,
     router,
     FormView,
     App, app;
@@ -87,6 +89,7 @@ App = Exoskeleton.View.extend({
 });
 
 
+
 router = new (Exoskeleton.Router.extend({
     routes: {
         '': function () {
@@ -99,6 +102,12 @@ router = new (Exoskeleton.Router.extend({
 }))();
 
 window.addEventListener('load', function () {
+    /*
+    React.renderComponent(
+        <h1>Hello, world!</h1>,
+        document.querySelector('.app')
+    );
+    */
     /*new FormView({el: document.querySelector('.search')});    */
     app = new App({el: document.querySelector('.app')});
     Exoskeleton.history.start({pushState: true, root: '/'});

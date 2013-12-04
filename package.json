@@ -1,9 +1,9 @@
-{
-  "name": "application-name",
+{ "name": "application-name",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "postinstall": "cat node_modules/exoskeleton/lib/{header,utils,events,model,router,history,footer}.js > node_modules/exoskeleton/exoskeleton.js"
   },
   "dependencies": {
     "express": "3.4.0",
@@ -12,7 +12,8 @@
     "socket.io-client": "0.9.16",
     "browserify": "2.35.1",
     "exoskeleton": "0.5.1",
-    "jt": "*",
-    "mongoose": "3.8.0"
+    "mongoose": "3.8.0",
+    "through": "*",
+    "react-tools": "*"
   }
 }
