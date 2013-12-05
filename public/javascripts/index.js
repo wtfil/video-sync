@@ -1,114 +1,77 @@
 /** @jsx React.DOM */
 var Exoskeleton = require('exoskeleton'),
     Player = require('./player'),
-    React = require('react-tools').React,
+    React = require('react-tools/build/modules/react'),
     router,
     FormView,
     App, app;
 
 
-FormView = Exoskeleton.View.extend({
-
-    events: {
-        'submit': 'onSubmit'
-    },
-
-    onSubmit: function (e) {
-        var val = this.el.querySelector('input').value;
+Form = React.createClass({
+    _onSubmit: function (e) {
         e.preventDefault();
-        this.trigger('submit', {val: val});
+        this.props.model.set('roomId', this._input.value);
+    },
+    componentDidMount: function () {
+        this._input = this.getDOMNode().querySelector('input');  
+    },
+    render: function () {
+        return <form className="search" onSubmit={this._onSubmit}>
+            <input placeholder="Paste youtube url or videoId here"/>
+            <button type="submit">Start</button>
+        </form>
     }
 });
 
-App = Exoskeleton.View.extend({
-    initialize: function () {
+App = React.createClass({
+    getInitialState: function () {
+        console.log(this.props.model.get('roomId'));
+        return {
+            roomId: this.props.model.get('roomId')
+        };
+    },
+    componentDidMount: function () {
         var _this = this;
-        this._content = this.el.querySelector('.app__content');
-        this._form = new FormView({el: this.el.querySelector('.search')});
-        this.showMain();
-        this._form.on('submit', function (data) {
-            if (!_this._roomId) {
-                _this._newRoom(data.val);
-            } else {
-                _this._changeVideo(data.val);
-            }
-        })
+        console.log(this.getDOMNode())
+        this.props.model.on('change:roomId', function (m, id) {
+            _this.setState('roomId', id);
+        })  
     },
-
-    _newRoom: function (videoUrl) {
-        Exoskeleton.utils.ajax({
-            type: 'POST',
-            url: '/video?videoUrl=' +  encodeURIComponent(videoUrl),
-            success: function (data) {
-                router.navigate('room/' + data.roomId, {trigger: true});
-            },
-            error: function (data) {
-                console.error(data.response);
-            }
-        });
-    },
-
-    _changeVideo: function (videoUrl) {
-        var _this = this;
-        Exoskeleton.utils.ajax({
-            type: 'POST',
-            url: '/video?roomId=' + this._roomId + '&videoUrl=' +  encodeURIComponent(videoUrl),
-            success: function (data) {
-                _this._player.changeVideo(data.videoId);
-            },
-            error: function (data) {
-                console.error(data.response);
-            }
-        });
-    },
-
-    update: function (view) {
-        var child = this._content.childNodes[0];
-        if (child) {
-            this._content.replaceChild(view.el, this._content.childNodes[0]);
-        } else {
-            this._content.appendChild(view.el);
+    render: function () {
+        var className = ['app'];
+        if (this.state.roomId) {
+            className.push('room');
         }
-    },
-
-    showRoom: function (id) {
-        var player = new Player({id: id});
-        this._roomId = id;
-        this._player = player;
-        this.update(player);
-        this.el.classList.add('room');
-        player.start();
-    },
-
-    showMain: function () {
-        this.el.classList.remove('room');
-        this._content.innerHTML = '';
-        this._roomId = null;
+        return <div className={className.join(' ')}>
+            <Form model={this.props.model}/>
+            <div className="app__content">
+               {this.state.roomId && <Player roomId={this.state.roomId}/>}
+            </div>
+        </div>
     }
-    
 });
 
-
+var appModel = new (Exoskeleton.Model.extend({
+    initialize: function () {
+        this.set({roomId: null});
+    }
+}));
 
 router = new (Exoskeleton.Router.extend({
     routes: {
         '': function () {
-            app.showMain();
+            appModel.set('roomId', null);
         },
         'room/:id': function (id) {
-            app.showRoom(id);
+            appModel.set('roomId', id);
         }
     }
 }))();
 
 window.addEventListener('load', function () {
-    /*
-    React.renderComponent(
-        <h1>Hello, world!</h1>,
-        document.querySelector('.app')
-    );
-    */
-    /*new FormView({el: document.querySelector('.search')});    */
-    app = new App({el: document.querySelector('.app')});
     Exoskeleton.history.start({pushState: true, root: '/'});
+    React.renderComponent(
+        <App model={appModel}/>,
+        document.body
+    );
 });

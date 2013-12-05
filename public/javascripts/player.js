@@ -1,21 +1,20 @@
-var Exoskeleton = require('Exoskeleton'),
+/** @jsx React.DOM */
+var React = require('react-tools/build/modules/react'),
+    Exoskeleton = require('exoskeleton'),
     Youtube = require('./youtube'),
     io = require('socket.io-client'),
     socket = io.connect('http://localhost');
 
-module.exports = Exoskeleton.View.extend({
-    initialize: function (options) {
-        this._roomId = options.id;
-    },
-    start: function () {
+module.exports = React.createClass({
+    componentDidMount: function () {
         var id = 'id' + Date.now(),
             _this = this;
+        this.getDOMNode().id = id;
 
-        this.el.id = id;
-        socket.emit('room.connect', {roomId: this._roomId});
+        socket.emit('room.connect', {roomId: this.props.roomId});
 
         Exoskeleton.utils.ajax({
-            url: '/video?roomId=' + this._roomId,
+            url: '/video?roomId=' + this.props.roomId,
             success: function (response) {
 
                 Exoskeleton.utils.ajax({
@@ -53,6 +52,8 @@ module.exports = Exoskeleton.View.extend({
     changeVideo: function (videoId) {
         socket.emit('change', {videoId: videoId});
         this._youtube.changeVideo(videoId);
+    },
+    render: function () {
+        return <div></div>
     }
-
 });

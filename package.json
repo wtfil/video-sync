@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "cat node_modules/exoskeleton/lib/{header,utils,events,model,router,history,footer}.js > node_modules/exoskeleton/exoskeleton.js"
+    "postinstall": "cat node_modules/exoskeleton/lib/{header,utils,dom-utils,events,model,router,history,footer}.js > node_modules/exoskeleton/exoskeleton.js"
   },
   "dependencies": {
     "express": "3.4.0",
