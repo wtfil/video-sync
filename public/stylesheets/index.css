@@ -11,8 +11,7 @@
     height: 100%;
 	box-sizing: border-box;
 	margin: 0;
-    left: 0;
-    right: 60px;
+    width: 580px;
     font-family: arial, sans-serif;
     font-size: 16px;
     position: absolute;
@@ -45,4 +44,15 @@
 {
     position: relative;
     margin: 0;
+}
+
+.player__over
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px;
+    height: 1000px;
+    background: red;
+    opacity: 0.1;
 }

@@ -35,25 +35,35 @@
                 onStateChange: this._onChange.bind(this)
             }
         });
-        console.log(this._player)
     }
 
     Youtube.prototype._method = function (method) {
         if (!this._player) {
             throw new Error('player is not loaded yed. Use .ready() method');
         }
+        /*this._rev ++;*/
         if (arguments.length > 1) {
             return this._player[method].apply(this._player, slice.call(arguments, 1));
         }
         return this._player[method]();
     }
+    Youtube.prototype.sync = function (data) {
+        if (data.videoId) {
+            this.changeVideo(data.videoId);
+            return;
+        }
+        if (data.state === 1) {
+            this.seek(data.time);
+            this.play();
+        } else if (data.state === 2) {
+            this.pause();
+        }
+          
+    };
+    Youtube.prototype._rev = 0;
     Youtube.prototype._onReady = function () {};
     Youtube.prototype._onChangeHandler = function () {};
     Youtube.prototype._onChange = function (e) {
-        if (this._eventDontFire) {
-            this._eventDontFire = false;
-            return;
-        }
         this._onChangeHandler(this.status());
     }
     Youtube.prototype.change = function (fn) {
@@ -63,14 +73,12 @@
         this._onReady = fn.bind(this, this);
     }
     Youtube.prototype.play = function () {
-        this._eventDontFire = true;
         this._method('playVideo');
     }
     Youtube.prototype.state = function () {
         return this._method('getPlayerState');
     }
     Youtube.prototype.pause = function () {
-        this._eventDontFire = true;
         this._method('pauseVideo');
     }
     Youtube.prototype.status = function () {
@@ -88,9 +96,9 @@
     Youtube.prototype.seek = function (time) {
         var start = Date.now(),
             _this = this;
-        this._eventDontFire = true;
         this._method('seekTo', time);
         // correcting video position
+        /*
         setTimeout(function () {
             var currentTime = _this._method('getCurrentTime'),
                 timeOffset = (Date.now() - start) / 1000;
@@ -98,6 +106,7 @@
                 _this.seek(time + timeOffset);
             }
         }, 1000);
+        */
     }
 
     module.exports = Youtube;

@@ -1,13 +1,10 @@
 /** @jsx React.DOM */
 var Exoskeleton = require('exoskeleton'),
     Player = require('./player'),
-    React = require('react-tools/build/modules/react'),
-    router,
-    FormView,
-    App, app;
+    React = require('react-tools/build/modules/react');
 
 
-Form = React.createClass({
+var Form = React.createClass({
     _onSubmit: function (e) {
         e.preventDefault();
         this.props.model.set('roomId', this._input.value);
@@ -23,19 +20,19 @@ Form = React.createClass({
     }
 });
 
-App = React.createClass({
+var App = React.createClass({
     getInitialState: function () {
-        console.log(this.props.model.get('roomId'));
         return {
             roomId: this.props.model.get('roomId')
         };
     },
     componentDidMount: function () {
         var _this = this;
-        console.log(this.getDOMNode())
         this.props.model.on('change:roomId', function (m, id) {
+            console.log(1);
             _this.setState('roomId', id);
-        })  
+            console.log(2);
+        });
     },
     render: function () {
         var className = ['app'];
@@ -52,12 +49,12 @@ App = React.createClass({
 });
 
 var appModel = new (Exoskeleton.Model.extend({
-    initialize: function () {
-        this.set({roomId: null});
+    defaults: {
+        roomId: null
     }
 }));
 
-router = new (Exoskeleton.Router.extend({
+var router = new (Exoskeleton.Router.extend({
     routes: {
         '': function () {
             appModel.set('roomId', null);
